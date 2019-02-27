@@ -9,17 +9,20 @@ import { switchMap } from 'rxjs/operators';
   styleUrls: ['./scoreboard.component.scss']
 })
 export class ScoreboardComponent implements OnInit {
-
   public score: any;
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService) {}
 
   ngOnInit() {
     // poll server every second
-    interval(1000).pipe(switchMap(() => {
-      return this.api.getScore();
-    })).subscribe(score => {
-      this.score = score;
-    });
+    interval(1000)
+      .pipe(
+        switchMap(() => {
+          return this.api.getScore();
+        })
+      )
+      .subscribe(score => {
+        this.score = score;
+      });
   }
 }
