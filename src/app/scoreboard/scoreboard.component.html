@@ -1,7 +1,17 @@
-<p>
-  scoreboard works!
-</p>
-
-<p>{{ score | json }}</p>
-
-<button (click)="getscore()">Get score</button>
+<div class="container" fxLayout="column" fxLayoutAlign="center center">
+  <mat-card class="time-card">
+    <div class="timer">{{ timer }}</div>
+  </mat-card>
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <mat-card class="score-card-left">{{ game.redTeamScore }}</mat-card>
+    <mat-card class="score-card-right">{{ game.blueTeamScore }}</mat-card>
+  </div>
+  <button
+    mat-flat-button
+    color="warn"
+    class="restart-button"
+    (click)="restartGame()"
+  >
+    Restart Game
+  </button>
+</div>

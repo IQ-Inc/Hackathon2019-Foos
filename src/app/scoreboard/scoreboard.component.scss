@@ -1,0 +1,41 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.time-card {
+  margin-bottom: 10px;
+  padding: 30px;
+  min-width: 270px;
+  min-height: 100px;
+}
+
+.score-card-left {
+  margin: 0 10px 0 0;
+  padding: 30px;
+  min-width: 100px;
+  min-height: 100px;
+  text-align: center;
+  color: red;
+  font-size: 87px;
+}
+
+.score-card-right {
+  padding: 30px;
+  min-width: 100px;
+  min-height: 100px;
+  text-align: center;
+  color: blue;
+  font-size: 87px;
+}
+
+.timer {
+  font-size: 87px;
+  width: 100%;
+  text-align: center;
+}
+
+.restart-button {
+  margin-top: 10px;
+  width: 330px;
+}
