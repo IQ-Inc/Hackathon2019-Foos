@@ -1,15 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApiService } from '../core/services/api.service';
 import { interval, timer, Subscription, of, Observable } from 'rxjs';
-import {
-  switchMap,
-  tap,
-  catchError,
-  exhaust,
-  exhaustMap
-} from 'rxjs/operators';
+import { switchMap, tap, catchError, exhaust, exhaustMap } from 'rxjs/operators';
 import { IGame } from '../core/models/game.model';
 
+import { webSocket } from 'rxjs/webSocket';
 /**
  * Scoreboard component. This component interprets
  * and displays raspberry pi game data.
@@ -46,7 +41,38 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
    * Initializes game
    */
   ngOnInit() {
-    this._gameInit();
+    const subject = webSocket('ws://10.0.170.224:3000');
+
+    subject.subscribe(
+      (msg: any) => {
+        console.log(msg);
+        this.game.blueTeamScore = msg.blue_goals;
+        this.game.redTeamScore = msg.red_goals;
+        this.timer = this.tohms(msg.time);
+      }, // Called whenever there is a message from the server.
+      err => console.log(err), // Called if at any point WebSocket API signals some kind of error.
+      () => console.log('complete') // Called when connection is closed (for whatever reason).
+    );
+  }
+
+  tohms(sec_num: number) {
+    let hours = Math.floor(sec_num / 3600);
+    let minutes = Math.floor((sec_num - hours * 3600) / 60);
+    let seconds = sec_num - hours * 3600 - minutes * 60;
+
+    let h = hours.toString();
+    let m = minutes.toString();
+    let s = seconds.toString();
+    if (hours < 10) {
+      h = '0' + hours;
+    }
+    if (minutes < 10) {
+      m = '0' + minutes;
+    }
+    if (seconds < 10) {
+      s = '0' + seconds;
+    }
+    return h + ':' + m + ':' + s;
   }
 
   /**
@@ -66,25 +92,6 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
     this._gameSubscription.unsubscribe();
     this.game = { redTeamScore: 0, blueTeamScore: 0 };
     this.timer = '0:00';
-    this._gameInit();
-  }
-
-  /**
-   * Initializes game data. An interval is observed that increments the timer
-   * and requests game data from the raspberry pi in the IGame JSON format.
-   */
-  private _gameInit(): void {
-    this._gameSubscription = interval(1000)
-      .pipe(
-        tap(second => (this.timer = this._fmtMSS(second + 1))),
-        switchMap(() => {
-          // poll RPi server every second
-          return this.api.getGameData();
-        })
-      )
-      .subscribe((game: IGame) => {
-        this.game = game;
-      });
   }
 
   /**
